@@ -1,0 +1,29 @@
+{
+  "name": "natours-backend",
+  "version": "1.0.0",
+  "description": "learning express, nodejs and mongodb",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/umersaleem50/natour-backend.git"
+  },
+  "keywords": [
+    "natours",
+    "express",
+    "nodejs"
+  ],
+  "author": "Umar saleem",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/umersaleem50/natour-backend/issues"
+  },
+  "homepage": "https://github.com/umersaleem50/natour-backend#readme",
+  "dependencies": {
+    "express": "^4.17.3",
+    "nodemon": "^2.0.15"
+  }
+}
