@@ -1,19 +1,23 @@
 const express = require('express');
+const morgan = require('morgan');
 
 const app = express();
 
-const PORT = 3000;
+const tourRouter = require('./routes/tourRoute');
+const userRouter = require('./routes/userRoute');
 
-app.get('/', (req, res) => {
-  res
-    .status(200)
-    .json({ message: 'You got a message from root!', app: 'natours' });
-});
+//MIDDLEWARES
 
-app.post('/', (req, res) => {
-  res.send('You have done a post request!');
-});
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
 
-app.listen(PORT, () => {
-  console.log(`App is running at port ${PORT} ...`);
-});
+app.use(express.json());
+app.use(express.static(`${__dirname}/public`));
+
+///////////////////
+//ROUTES
+app.use('/api/v1/tours', tourRouter);
+app.use('/api/v1/users', userRouter);
+
+module.exports = app;
