@@ -5,6 +5,14 @@ const tourController = require('../controllers/tourController');
 const tourRouter = express.Router();
 
 tourRouter
+  .route('/top-5-tours')
+  .get(tourController.aliasTopTours, tourController.getAllTours);
+
+tourRouter.route('/tour-stats').get(tourController.getTourStats);
+
+tourRouter.route('/monthly-plans/:year').get(tourController.getTourPlans);
+
+tourRouter
   .route('/')
   .get(tourController.getAllTours)
   .post(tourController.createTour);
