@@ -2,7 +2,9 @@ const express = require('express');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
 const ApiError = require('./utilities/ApiError');
+
 const globalErrorHandler = require('./controllers/globalErrorHandler');
+
 dotenv.config({ path: `${__dirname}/config.env` });
 
 const app = express();
