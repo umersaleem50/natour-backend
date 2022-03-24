@@ -14,46 +14,50 @@ exports.aliasTopTours = (req, res, next) => {
   next();
 };
 
-exports.createTour = async (req, res) => {
-  try {
-    const newTour = await Tour.create(req.body);
-
-    res.status(201).json({
-      status: 'sucess',
-      data: {
-        tours: newTour,
-      },
-    });
-  } catch (err) {
-    res.status(400).json({
-      status: 'fail',
-      message: 'Invalid body passed',
-      dbMessage: err.message,
-    });
-  }
+const higherAsync = (fn) => (req, res, next) => {
+  fn(req, res, next).catch((err) => next(err));
 };
 
-exports.getAllTours = async (req, res) => {
+exports.createTour = higherAsync(async (req, res) => {
+  // try {
+  const newTour = await Tour.create(req.body);
+
+  res.status(201).json({
+    status: 'sucess',
+    data: {
+      tours: newTour,
+    },
+  });
+  // } catch (err) {
+  //   res.status(400).json({
+  //     status: 'fail',
+  //     message: 'Invalid body passed',
+  //     dbMessage: err.message,
+  //   });
+  // }
+});
+
+exports.getAllTours = higherAsync(async (req, res, next) => {
   console.log(req.query);
 
-  try {
-    const feature = new ApiFeature(Tour, req.query)
-      .filter()
-      .sort()
-      .limit()
-      .paginate();
+  // try {
+  const feature = new ApiFeature(Tour, req.query)
+    .filter()
+    .sort()
+    .limit()
+    .paginate();
 
-    const tours = await feature.query;
+  const tours = await feature.query;
 
-    res.status(200).json({
-      status: 'sucess',
-      result: tours.length,
-      data: { tours },
-    });
-  } catch (err) {
-    res.status(404).json({ status: 'fail', message: err });
-  }
-};
+  res.status(200).json({
+    status: 'sucess',
+    result: tours.length,
+    data: { tours },
+  });
+  // } catch (err) {
+  //   res.status(404).json({ status: 'fail', message: err });
+  // }
+});
 
 exports.getTour = async (req, res) => {
   try {
