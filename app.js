@@ -27,11 +27,6 @@ app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 
 app.all('*', (req, res, next) => {
-  // res.status(404).json({
-  //   status: 'failed',
-  //   message: `we couldn't found ${req.originalUrl} on this server!`,
-  // });
-
   next(
     new ApiError(`we couldn't found ${req.originalUrl} on this server!`, 404)
   );

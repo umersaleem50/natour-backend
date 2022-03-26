@@ -1,8 +1,10 @@
 const Tour = require('../models/tourModel');
+
 const ApiError = require('../utilities/ApiError');
+
 const ApiFeature = require('../utilities/ApiFeature');
 
-const catchAsync = require('../utilities/catchAsync')
+const catchAsync = require('../utilities/catchAsync');
 
 exports.aliasTopTours = (req, res, next) => {
   req.query.sort = '-ratingsAverage,price';
@@ -11,9 +13,7 @@ exports.aliasTopTours = (req, res, next) => {
   next();
 };
 
-
 exports.createTour = catchAsync(async (req, res) => {
-  
   const newTour = await Tour.create(req.body);
 
   res.status(201).json({
@@ -22,11 +22,10 @@ exports.createTour = catchAsync(async (req, res) => {
       tours: newTour,
     },
   });
-
 });
 
-exports.getAllTours = catchAsync(async (req, res, next) => {
- 
+exports.getAllTours = catchAsync(async (req, res) => {
+  console.log(x);
   const feature = new ApiFeature(Tour, req.query)
     .filter()
     .sort()
@@ -39,14 +38,14 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
     status: 'sucess',
     result: tours.length,
     data: { tours },
- 
+  });
 });
 
-exports.getTour = catchAsync(async (req, res,next) => {
+exports.getTour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findById(req.params.id);
 
-  if(!tour) {
-    return next(new ApiError(`couldn't found a tour with this ID.`, 404))
+  if (!tour) {
+    return next(new ApiError(`couldn't found a tour with this ID.`, 404));
   }
 
   res.status(200).json({
@@ -56,24 +55,24 @@ exports.getTour = catchAsync(async (req, res,next) => {
   });
 });
 
-exports.updateTour = catchAsync(async (req, res) => {
+exports.updateTour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
   });
 
-  if(!tour) {
-    return next(new ApiError(`couldn't found a tour with this ID.`, 404))
+  if (!tour) {
+    return next(new ApiError(`couldn't found a tour with this ID.`, 404));
   }
 
   res.status(200).json({ status: 'Sucess', data: { tour } });
 });
 
-exports.deleteTour = catchAsync(async (req, res) => {
-  await Tour.findByIdAndDelete(req.params.id);
+exports.deleteTour = catchAsync(async (req, res, next) => {
+  const tour = await Tour.findByIdAndDelete(req.params.id);
 
-  if(!tour) {
-    return next(new ApiError(`couldn't found a tour with this ID.`, 404))
+  if (!tour) {
+    return next(new ApiError(`couldn't found a tour with this ID.`, 404));
   }
 
   res.status(204).json({ status: 'Sucess', data: null });
@@ -114,7 +113,7 @@ exports.getTourStats = catchAsync(async (req, res) => {
 
 //THIS NEED TO BE FIXED, OTHERWISE REQUEST NOT WORKING
 /////////////////////
-exports.getTourPlans = catchAsync(async(req, res) =>{
+exports.getTourPlans = catchAsync(async (req, res, next) => {
   const year = req.params.year * 1;
 
   const plans = await Tour.aggregate([
@@ -127,12 +126,12 @@ exports.getTourPlans = catchAsync(async(req, res) =>{
         },
       },
     },
-    // {
-    //   $group: {
-    //     _id: `$startDates`,
-    //     month: { $month: { $dateFromString: '$startDate' } },
-    //   },
-    // },
+    {
+      $group: {
+        _id: `$startDates`,
+        month: { $month: { $dateFromString: '$startDate' } },
+      },
+    },
   ]);
 
   res.status(200).json({
@@ -140,5 +139,5 @@ exports.getTourPlans = catchAsync(async(req, res) =>{
     data: {
       tours: plans,
     },
-  })
+  });
 });

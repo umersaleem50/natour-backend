@@ -2,6 +2,12 @@ const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const app = require('./app');
 
+process.on('uncaughtException', (err) => {
+  console.log(err.name);
+  console.log('UNCAUGHT EXCEPTION!, SHUTTING DOWN THE SERVER!');
+  process.exit(1);
+});
+
 dotenv.config({ path: `${__dirname}/config.env` });
 
 const PORT = process.env.PORT || 3000;
@@ -15,6 +21,14 @@ mongoose
   })
   .then(() => console.log('Database connected sucessfully!'));
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`App is running at port ${PORT} ...`);
+});
+
+process.on('unhandledRejection', (err) => {
+  console.log(err.name);
+  console.log('Unhandled Rejection Shutting down server....');
+  server.close(() => {
+    process.exit(1);
+  });
 });
