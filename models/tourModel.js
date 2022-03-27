@@ -55,6 +55,8 @@ const tourSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now(), select: false },
 });
 
+//so there are also pre and post hocks on mongodb
+
 const Tour = mongoose.model('Tour', tourSchema);
 
 module.exports = Tour;

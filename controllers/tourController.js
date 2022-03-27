@@ -25,7 +25,6 @@ exports.createTour = catchAsync(async (req, res) => {
 });
 
 exports.getAllTours = catchAsync(async (req, res) => {
-  console.log(x);
   const feature = new ApiFeature(Tour, req.query)
     .filter()
     .sort()
