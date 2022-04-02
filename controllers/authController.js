@@ -95,3 +95,15 @@ exports.restrict =
     }
     next();
   };
+
+exports.forgetPassword = catchAsync(async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email });
+
+  if (!user)
+    return next(new ApiError('There is no user with this email.', 401));
+
+  //generateToken
+  const resetToken = user.createRandomTokenResetPassword();
+
+  await user.save({ validateBeforeSave: false });
+});
