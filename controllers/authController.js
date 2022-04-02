@@ -10,6 +10,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     confirmPassword: req.body.confirmPassword,
+    role: req.body.role,
   });
 
   const token = jwt.sign({ id: userData._id }, process.env.JWT_SECURE_KEY, {
@@ -78,6 +79,8 @@ exports.protect = catchAsync(async (req, res, next) => {
       new ApiError(`The user changed the password, Please login again!`, 401)
     );
   }
+
+  req.user = currentUser;
 
   next();
 });
