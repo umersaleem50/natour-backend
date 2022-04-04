@@ -7,6 +7,16 @@ const User = require('../models/userModel');
 const ApiError = require('../utilities/ApiError');
 const sendMail = require('../utilities/email');
 
+const signToken = (id) =>
+  jwt.sign({ id }, process.env.JWT_SECURE_KEY, {
+    expiresIn: process.env.JWT_EXPIRE_IN,
+  });
+
+const createSendToken = (user, statusCode, res) => {
+  const token = signToken(user._id);
+  res.status(statusCode).json({ status: 'success', token, data: user });
+};
+
 exports.signup = catchAsync(async (req, res, next) => {
   const userData = await User.create({
     name: req.body.name,
@@ -16,11 +26,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     role: req.body.role,
   });
 
-  const token = jwt.sign({ id: userData._id }, process.env.JWT_SECURE_KEY, {
-    expiresIn: process.env.JWT_EXPIRE_IN,
-  });
-
-  res.status(201).json({ status: 'success', token, data: userData });
+  createSendToken(userData, 201, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -37,17 +43,19 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new ApiError('Please check your email or password!', 400));
   }
 
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECURE_KEY, {
-    expiresIn: process.env.JWT_EXPIRE_IN,
-  });
+  createSendToken(user, 200, res);
 
-  res.status(200).json({
-    status: 'success',
-    token,
-    data: {
-      user: user,
-    },
-  });
+  // const token = jwt.sign({ id: user._id }, process.env.JWT_SECURE_KEY, {
+  //   expiresIn: process.env.JWT_EXPIRE_IN,
+  // });
+
+  // res.status(200).json({
+  //   status: 'success',
+  //   token,
+  //   data: {
+  //     user: user,
+  //   },
+  // });
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
@@ -166,4 +174,18 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
   //set new password
   res.status(200).json({ status: 'success', token });
+});
+
+exports.updatePassword = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.user.id).select('+password');
+
+  if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
+    return next(new ApiError('The current password is incorrect!', 401));
+  }
+
+  user.password = req.body.password;
+  user.confirmPassword = req.body.confirmPassword;
+  await user.save();
+
+  createSendToken(user, 200, res);
 });
