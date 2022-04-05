@@ -51,6 +51,10 @@ const userSchema = new mongoose.Schema({
   passwordResetExpires: {
     type: Date,
   },
+  active: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 userSchema.pre('save', async function (next) {
@@ -63,6 +67,11 @@ userSchema.pre('save', async function (next) {
   //this will set confirm password to undefined
   this.confirmPassword = undefined;
 
+  next();
+});
+
+userSchema.pre(/^find/, async function (next) {
+  this.find({ active: { $ne: false } });
   next();
 });
 
@@ -102,7 +111,7 @@ userSchema.methods.createRandomTokenResetPassword = function () {
 
   this.passwordResetExpires = Date.now() + 60 * 1000 * 10;
 
-  console.log({ token }, this.passwordResetToken);
+  // console.log({ token }, this.passwordResetToken);
 
   return token;
 };
