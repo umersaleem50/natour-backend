@@ -14,6 +14,20 @@ const signToken = (id) =>
 
 const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
+
+  const cookieOptions = {
+    expiresIn: new Date(
+      Date.now() + process.env.COOKIE_EXPIRES_IN * 60 * 60 * 24 * 1000
+    ),
+    httpOnly: true,
+  };
+
+  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+
+  res.cookie('jwt', token, cookieOptions);
+
+  user.password = undefined;
+
   res.status(statusCode).json({ status: 'success', token, data: user });
 };
 
@@ -44,18 +58,6 @@ exports.login = catchAsync(async (req, res, next) => {
   }
 
   createSendToken(user, 200, res);
-
-  // const token = jwt.sign({ id: user._id }, process.env.JWT_SECURE_KEY, {
-  //   expiresIn: process.env.JWT_EXPIRE_IN,
-  // });
-
-  // res.status(200).json({
-  //   status: 'success',
-  //   token,
-  //   data: {
-  //     user: user,
-  //   },
-  // });
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
@@ -99,6 +101,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 exports.restrict =
   (...args) =>
   (req, res, next) => {
+    //checks if the user role doesn't exits in the list
     if (!args.includes(req.user.role)) {
       return next(
         new ApiError(`You don't have permission to perform this task.`, 403)
@@ -138,7 +141,7 @@ exports.forgetPassword = catchAsync(async (req, res, next) => {
       .status(200)
       .json({ status: 'success', message: 'Token send to your email!' });
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     user.passwordReset = undefined;
     user.passwordResetExpires = undefined;
     await user.save({ validateBeforeSave: false });
