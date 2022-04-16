@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const app = require('./app');
 
 process.on('uncaughtException', (err) => {
-  console.log(err.name);
+  console.log(err);
   console.log('UNCAUGHT EXCEPTION!, SHUTTING DOWN THE SERVER!');
   process.exit(1);
 });

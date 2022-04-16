@@ -23,9 +23,9 @@ const userRouter = require('./routes/userRoute');
 app.use(helmet());
 
 //FOR GET REQUEST DETAILS IN DEVELOPMENT
-if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
-}
+// if (process.env.NODE_ENV === 'development') {
+//   app.use(morgan('dev'));
+// }
 
 //FOR BODY PARSING, AND WILL LIMIT THE AMMOUNT OF DATA COMMING
 app.use(express.json({ limit: '10kb' }));

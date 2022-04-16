@@ -4,58 +4,67 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    require: [true, 'Please tell us your name'],
-  },
-  email: {
-    type: String,
-    require: [true, 'Please provide an email'],
-    unique: true,
-    lowerCase: true,
-    validate: validator.isEmail,
-  },
-  image: {
-    type: String,
-  },
-  role: {
-    type: String,
-    enum: ['admin', 'lead-guide', 'guide', 'user'],
-    default: 'user',
-  },
-  password: {
-    type: String,
-    require: [true, 'Please provide a password'],
-    minLength: 8,
-    select: false,
-  },
-  confirmPassword: {
-    type: String,
-    require: [true, 'Please confirm your password'],
-    validate: {
-      validator: function (val) {
-        return val === this.password;
+//If something not works try to remove passwordChangedAT
+
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      require: [true, 'Please tell us your name'],
+    },
+    email: {
+      type: String,
+      require: [true, 'Please provide an email'],
+      unique: true,
+      lowerCase: true,
+      validate: validator.isEmail,
+    },
+    image: {
+      type: String,
+    },
+    role: {
+      type: String,
+      enum: ['admin', 'lead-guide', 'guide', 'user'],
+      default: 'user',
+    },
+    password: {
+      type: String,
+      require: [true, 'Please provide a password'],
+      minLength: 8,
+      select: false,
+    },
+    confirmPassword: {
+      type: String,
+      require: [true, 'Please confirm your password'],
+      validate: {
+        validator: function (val) {
+          return val === this.password;
+        },
+        message: 'Password are not same!',
       },
-      message: 'Password are not same!',
+    },
+    passwordChangedAt: {
+      type: Date,
+      // select: false,
+      // default: new Date(),
+      // select: false,
+    },
+    passwordResetToken: {
+      type: String,
+    },
+    passwordResetExpires: {
+      type: Date,
+    },
+    active: {
+      type: Boolean,
+      default: true,
     },
   },
-  passwordChangedAt: {
-    type: Date,
-    // default: new Date(),
-    // select: false,
-  },
-  passwordResetToken: {
-    type: String,
-  },
-  passwordResetExpires: {
-    type: Date,
-  },
-  active: {
-    type: Boolean,
-    default: true,
-  },
-});
+  {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
+);
 
 userSchema.pre('save', async function (next) {
   //Only run if password is being create or update
@@ -119,3 +128,5 @@ userSchema.methods.createRandomTokenResetPassword = function () {
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
+
+//If something not works try to remove passwordChangedAT
