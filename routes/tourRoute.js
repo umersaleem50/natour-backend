@@ -14,18 +14,26 @@ tourRouter
 
 tourRouter.route('/tour-stats').get(tourController.getTourStats);
 
-tourRouter.route('/monthly-plans/:year').get(tourController.getTourPlans);
+tourRouter
+  .route('/monthly-plans/:year')
+  .get(
+    authController.protect,
+    authController.restrict('admin', 'lead-guide', 'guide'),
+    tourController.getTourPlans
+  );
 
 tourRouter
   .route('/')
-  .get(authController.protect, tourController.getAllTours)
-  .post(tourController.createTour);
+  .get(tourController.getAllTours)
+  .post(authController.protect, tourController.createTour);
+
+tourRouter.use(authController.protect);
+
 tourRouter
   .route('/:id')
   .get(tourController.getTour)
   .patch(tourController.updateTour)
   .delete(
-    authController.protect,
     authController.restrict('admin', 'lead-guide'),
     tourController.deleteTour
   );

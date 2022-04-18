@@ -1,5 +1,6 @@
 const catchAsync = require('../utilities/catchAsync');
 const ApiError = require('../utilities/ApiError');
+const ApiFeature = require('../utilities/ApiFeature');
 
 exports.deleteOne = (Model) =>
   catchAsync(async (req, res, next) => {
@@ -52,5 +53,26 @@ exports.getOne = (Model, populateOptions) =>
       status: 'sucess',
 
       data: { doc },
+    });
+  });
+
+exports.getAll = (Model) =>
+  catchAsync(async (req, res, next) => {
+    //Small hack
+    let filter = {};
+    if (req.params.tourId) filter = { tour: req.params.tourId };
+
+    const feature = new ApiFeature(Model.find(filter), req.query)
+      .filter()
+      .sort()
+      .limit()
+      .paginate();
+
+    const doc = await feature.query;
+
+    res.status(200).json({
+      status: 'sucess',
+      result: doc.length,
+      data: { data: doc },
     });
   });

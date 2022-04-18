@@ -1,8 +1,7 @@
 const Tour = require('../models/tourModel');
-// const ApiError = require('../utilities/ApiError');
-const ApiFeature = require('../utilities/ApiFeature');
 const catchAsync = require('../utilities/catchAsync');
 const factory = require('./handleFactory');
+// const ApiError = require('../utilities/ApiError');
 
 exports.aliasTopTours = (req, res, next) => {
   req.query.sort = '-ratingsAverage,price';
@@ -12,22 +11,6 @@ exports.aliasTopTours = (req, res, next) => {
 };
 
 exports.createTour = factory.createOne(Tour);
-
-exports.getAllTours = catchAsync(async (req, res) => {
-  const feature = new ApiFeature(Tour, req.query)
-    .filter()
-    .sort()
-    .limit()
-    .paginate();
-
-  const tours = await feature.query;
-
-  res.status(200).json({
-    status: 'sucess',
-    result: tours.length,
-    data: { tours },
-  });
-});
 
 exports.getTourStats = catchAsync(async (req, res) => {
   const stats = await Tour.aggregate([
@@ -93,6 +76,7 @@ exports.getTourPlans = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.getAllTours = factory.getAll(Tour);
 exports.getTour = factory.getOne(Tour, { path: 'review' });
 exports.updateTour = factory.updateOne(Tour);
 exports.deleteTour = factory.deleteOne(Tour);
