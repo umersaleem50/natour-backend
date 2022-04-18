@@ -1,6 +1,7 @@
 const User = require('../models/userModel');
 const catchAsync = require('../utilities/catchAsync');
 const ApiError = require('../utilities/ApiError');
+const factory = require('./handleFactory');
 
 const filterData = (obj, ...filterEl) => {
   const newObj = {};
@@ -49,18 +50,11 @@ exports.createUser = (req, res) => {
 };
 
 exports.getUser = (req, res) => {
-  res
-    .status(500)
-    .json({ status: 'error', message: 'This route need to be implement' });
+  res.status(500).json({
+    status: 'error',
+    message: `This route is't implemented. Please go to /login instead`,
+  });
 };
 
-exports.updateUser = (req, res) => {
-  res
-    .status(500)
-    .json({ status: 'error', message: 'This route need to be implement' });
-};
-exports.deleteUser = (req, res) => {
-  res
-    .status(500)
-    .json({ status: 'error', message: 'This route need to be implement' });
-};
+exports.updateUser = factory.updateOne(User);
+exports.deleteUser = factory.deleteOne(User);
