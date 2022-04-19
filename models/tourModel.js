@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
 // const User = require('./userModel');
 
 const tourSchema = new mongoose.Schema(
@@ -15,12 +16,13 @@ const tourSchema = new mongoose.Schema(
       type: Number,
       require: [true, `A tour must have a duration`],
     },
+    slug: String,
     difficulty: {
       type: String,
       require: [true, `A tour must have a difficulty`],
       trim: true,
       enum: {
-        values: ['easy', 'medium', 'hard'],
+        values: ['easy', 'medium', 'difficult'],
         message: 'A tour can be easy, medium or hard',
       },
     },
@@ -97,11 +99,19 @@ const tourSchema = new mongoose.Schema(
 //   next();
 // });
 
+tourSchema.index({ price: 1, ratingAverage: -1 });
+tourSchema.index({ slug: 1 });
+
 // Virtual Populate
 tourSchema.virtual('reviews', {
   ref: 'Review',
   foreignField: 'tour',
   localField: '_id',
+});
+
+tourSchema.pre('save', function (next) {
+  this.slug = slugify(this.name, { lower: true, trim: true });
+  next();
 });
 
 tourSchema.pre(/^find/, function (next) {
