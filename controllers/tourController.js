@@ -1,7 +1,7 @@
 const Tour = require('../models/tourModel');
 const catchAsync = require('../utilities/catchAsync');
 const factory = require('./handleFactory');
-// const ApiError = require('../utilities/ApiError');
+const ApiError = require('../utilities/ApiError');
 
 exports.aliasTopTours = (req, res, next) => {
   req.query.sort = '-ratingsAverage,price';
@@ -74,6 +74,27 @@ exports.getTourPlans = catchAsync(async (req, res, next) => {
       tours: plans,
     },
   });
+});
+
+exports.getToursWithin = catchAsync(async (req, res, next) => {
+  const { distance, latlng, unit } = req.params;
+  const radius = unit === 'mi' ? distance / 3963 : distance / 6371;
+  const [lat, lng] = latlng.split(',');
+
+  if (!lat || !lng)
+    return next(
+      new ApiError('Please provide the coordinates of your location', 400)
+    );
+
+  const tour = await Tour.find({
+    startLocation: {
+      $geoWithin: { $centerSphere: [[lng, lat], radius] },
+    },
+  });
+
+  res
+    .status(200)
+    .json({ status: 'success', results: tour.length, data: { data: tour } });
 });
 
 exports.getAllTours = factory.getAll(Tour);
