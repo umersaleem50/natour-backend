@@ -102,6 +102,7 @@ const tourSchema = new mongoose.Schema(
 
 tourSchema.index({ price: 1, ratingAverage: -1 });
 tourSchema.index({ slug: 1 });
+
 tourSchema.index({ startLocation: '2dSphere' });
 
 // Virtual Populate
@@ -123,6 +124,17 @@ tourSchema.pre(/^find/, function (next) {
   });
   next();
 });
+
+// AGGREGATION MIDDLEWARE FOR MONGOS
+// THIS WILL ADD $MATCH TO EVERY AGGREGATION , DISABILING IT TO BECAUSE $GEONEAR NEED ALWAYS THE FIRST AGGREGATION
+
+// tourSchema.pre('aggregate', function (next) {
+//   this.pipeline.unshift({ $match: { secretTour: { $ne: true } } });
+
+//   console.log(this.pipeline);
+
+//   next();
+// });
 
 //so there are also pre and post hocks on mongodb
 

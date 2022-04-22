@@ -97,6 +97,33 @@ exports.getToursWithin = catchAsync(async (req, res, next) => {
     .json({ status: 'success', results: tour.length, data: { data: tour } });
 });
 
+exports.getTourDistances = catchAsync(async (req, res, next) => {
+  const { latlng, unit } = req.params;
+
+  const [lat, lng] = latlng.split(',');
+
+  if (!lng || !lat)
+    return next(
+      new ApiError('Please provide the langitude and latitudes', 400)
+    );
+
+  const multipler = unit === 'mi' ? 0.00062 : 0.0001;
+
+  console.log(lng, lat, multipler);
+
+  const distance = await Tour.aggregate([
+    {
+      $geoNear: {
+        near: { type: 'Point', coordinates: [lng * 1, lat * 1] },
+        distanceField: 'distance',
+        distanceMultiplier: multipler,
+      },
+    },
+  ]);
+
+  res.status(200).json({ status: 'sucess', data: { distance } });
+});
+
 exports.getAllTours = factory.getAll(Tour);
 exports.getTour = factory.getOne(Tour, { path: 'review' });
 exports.updateTour = factory.updateOne(Tour);
