@@ -57,6 +57,7 @@ const tourSchema = new mongoose.Schema(
     },
     images: [String],
     startDates: [String],
+    maxGroupSize: Number,
     createdAt: { type: Date, default: Date.now(), select: false },
     startLocation: {
       type: {
@@ -65,7 +66,7 @@ const tourSchema = new mongoose.Schema(
         enum: ['Point'],
       },
       coordinates: [Number],
-      discription: String,
+      description: String,
       address: String,
     },
     locations: [

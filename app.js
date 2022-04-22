@@ -13,13 +13,14 @@ const ApiError = require('./utilities/ApiError');
 
 const globalErrorHandler = require('./controllers/globalErrorHandler');
 
-dotenv.config({ path: `${__dirname}/config.env` });
-
-const app = express();
-
 const tourRouter = require('./routes/tourRoute');
 const userRouter = require('./routes/userRoute');
 const reviewRouter = require('./routes/reviewRoute');
+const viewRouter = require('./routes/viewRoute');
+
+const app = express();
+
+dotenv.config({ path: `${__dirname}/config.env` });
 
 //MIDDLEWARES
 app.set('view engine', 'pug');
@@ -57,14 +58,11 @@ const requestLimit = rateLimit({
 
 //FOR LIMITING THE AMMOUNT OF REQUESTS
 
-app.get('/', (req, res) => {
-  res.status(200).render('base');
-});
-
 app.use('/api', requestLimit);
 
 ///////////////////
 //ROUTES
+app.use('/', viewRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
