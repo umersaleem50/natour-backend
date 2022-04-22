@@ -1,4 +1,6 @@
 const express = require('express');
+const path = require('path');
+
 // const morgan = require('morgan');
 const dotenv = require('dotenv');
 const helmet = require('helmet');
@@ -20,6 +22,8 @@ const userRouter = require('./routes/userRoute');
 const reviewRouter = require('./routes/reviewRoute');
 
 //MIDDLEWARES
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
 
 app.use(helmet());
 
@@ -43,7 +47,7 @@ app.use(
 );
 
 //FOR SERVING STATIC FILES
-app.use(express.static(`${__dirname}/public`));
+app.use(express.static(path.join(__dirname, 'public')));
 
 const requestLimit = rateLimit({
   max: 100,
@@ -52,6 +56,11 @@ const requestLimit = rateLimit({
 });
 
 //FOR LIMITING THE AMMOUNT OF REQUESTS
+
+app.get('/', (req, res) => {
+  res.status(200).render('base');
+});
+
 app.use('/api', requestLimit);
 
 ///////////////////
