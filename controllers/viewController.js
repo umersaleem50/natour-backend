@@ -13,15 +13,21 @@ exports.getOverview = catchAsync(async (req, res, next) => {
 
 exports.getTour = catchAsync(async (req, res, next) => {
   const { tourSlug } = req.params;
-  const tour = await Tour.findOne({ slug: tourSlug });
+  const tour = await Tour.findOne({ slug: tourSlug }).populate({
+    path: 'reviews',
+    fields: 'review rating user',
+  });
 
   if (!tour) return next(new ApiError('No document tour found!', 400));
   //2) Build template
 
   //3) Render data of 1)
 
-  res.status(200).render('tour', {
-    title: 'The Forest Hiker Tour',
-    tour,
-  });
+  res
+    .status(200)
+    // .json({ status: 'success', tour });
+    .render('tour', {
+      title: 'The Forest Hiker Tour',
+      tour,
+    });
 });
