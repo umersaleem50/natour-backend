@@ -1,5 +1,6 @@
 const Tour = require('../models/tourModel');
 const catchAsync = require('../utilities/catchAsync');
+const ApiError = require('../utilities/ApiError');
 
 exports.getOverview = catchAsync(async (req, res, next) => {
   const tours = await Tour.find();
@@ -10,8 +11,17 @@ exports.getOverview = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getTour = (req, res) => {
+exports.getTour = catchAsync(async (req, res, next) => {
+  const { tourSlug } = req.params;
+  const tour = await Tour.findOne({ slug: tourSlug });
+
+  if (!tour) return next(new ApiError('No document tour found!', 400));
+  //2) Build template
+
+  //3) Render data of 1)
+
   res.status(200).render('tour', {
     title: 'The Forest Hiker Tour',
+    tour,
   });
-};
+});
