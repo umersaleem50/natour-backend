@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema(
       lowerCase: true,
       validate: validator.isEmail,
     },
-    image: {
+    photo: {
       type: String,
     },
     role: {
