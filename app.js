@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-
+const cors = require('cors');
 // const morgan = require('morgan');
 const dotenv = require('dotenv');
 const helmet = require('helmet');
@@ -25,6 +25,7 @@ dotenv.config({ path: `${__dirname}/config.env` });
 //MIDDLEWARES
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
+app.use(cors());
 
 app.use(helmet());
 
