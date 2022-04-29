@@ -27,7 +27,11 @@ app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 app.use(cors());
 
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  })
+);
 
 //FOR GET REQUEST DETAILS IN DEVELOPMENT
 // if (process.env.NODE_ENV === 'development') {
