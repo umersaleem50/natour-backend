@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const cors = require('cors');
 // const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
@@ -54,6 +55,7 @@ app.use(
 
 //FOR SERVING STATIC FILES
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cookieParser());
 
 const requestLimit = rateLimit({
   max: 100,

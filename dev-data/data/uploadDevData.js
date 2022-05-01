@@ -22,20 +22,20 @@ mongoose
     console.log(err);
   });
 
-const toursData = JSON.parse(
-  fs.readFileSync(`${__dirname}/tours.json`, 'utf-8')
-);
-const reviewsData = JSON.parse(
-  fs.readFileSync(`${__dirname}/reviews.json`, 'utf-8')
-);
+// const toursData = JSON.parse(
+//   fs.readFileSync(`${__dirname}/tours.json`, 'utf-8')
+// );
+// const reviewsData = JSON.parse(
+//   fs.readFileSync(`${__dirname}/reviews.json`, 'utf-8')
+// );
 const usersData = JSON.parse(
   fs.readFileSync(`${__dirname}/users.json`, 'utf-8')
 );
 
 const importData = async () => {
   try {
-    await Tour.create(toursData);
-    await Review.create(reviewsData);
+    // await Tour.create(toursData);
+    // await Review.create(reviewsData);
     await User.create(usersData);
     console.log(`Data imported sucessfully!`);
   } catch (err) {
@@ -46,9 +46,9 @@ const importData = async () => {
 
 const deleteData = async () => {
   try {
-    await Tour.deleteMany();
+    // await Tour.deleteMany();
     await User.deleteMany();
-    await Review.deleteMany();
+    // await Review.deleteMany();
     console.log(`Data deleted sucessfully!`);
   } catch (err) {
     console.log(err);

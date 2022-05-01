@@ -60,6 +60,28 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
+exports.isLoggedIn = catchAsync(async (req, res, next) => {
+  if (req.cookies.jwt) {
+    const decode = await promisify(jwt.verify)(
+      req.cookies.jwt,
+      process.env.JWT_SECURE_KEY
+    );
+
+    const user = await User.findById(decode.id).select('+photo');
+
+    if (!user) return next();
+
+    if (user.passwordChangedAfter(decode.iat)) {
+      return next();
+    }
+
+    res.locals.user = user;
+    return next();
+  }
+
+  next();
+});
+
 exports.protect = catchAsync(async (req, res, next) => {
   let token;
   if (
