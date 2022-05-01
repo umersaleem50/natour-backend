@@ -9,15 +9,15 @@ mixin overviewBox(label,text,icon)
         span.overview-box__text= text
 
 block append head
-    script(src='https://api.mapbox.com/mapbox-gl-js/v0.54.0/mapbox-gl.js' type="text/javascript")
-    link(href='https://api.mapbox.com/mapbox-gl-js/v0.54.0/mapbox-gl.css' rel='stylesheet')
-
+    //- script(src='https://api.mapbox.com/mapbox-gl-js/v0.54.0/mapbox-gl.js' type="text/javascript")
+    //- link(href='https://api.mapbox.com/mapbox-gl-js/v0.54.0/mapbox-gl.css' rel='stylesheet')
+    
 
 block content
     section.section-header
         .header__hero
             .header__hero-overlay &nbsp;
-            img.header__hero-img(src=`/img/${tour.imageCover}`, alt=`${tour.name}`)
+            img.header__hero-img(src=`/img/tours/${tour.imageCover}`, alt=`${tour.name}`)
 
         .heading-box
             h1.heading-primary
@@ -69,7 +69,7 @@ block content
 
 
     section.section-map
-    #map(data-location= JSON.stringify(tour.locations))
+        #map(data-location= JSON.stringify(tour.locations))
 
     section.section-reviews
 

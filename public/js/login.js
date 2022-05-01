@@ -1,20 +1,7 @@
 /*eslint-disable*/
-console.log('working', document.getElementById('myForm'));
-// const form = document
-//   .queryselector('.customSeletor')
-//   .addEventListener('submit', (e) => {
-//     e.preventDefault();
-//     console.log('working');
-//     const email = form.querySelector('#email');
-//     const password = form.querySelector('#password');
-//     alert(email, password);
-//   });
+// import { notification } from './notification';
 
-const form = document.getElementById('myForm');
-
-const submitBtn = document.getElementById('submitBtn');
-
-const login = async (email, password) => {
+export const login = async (email, password) => {
   try {
     const res = await axios({
       method: 'POST',
@@ -25,22 +12,14 @@ const login = async (email, password) => {
     console.log(res);
 
     if (res.data.status === 'success') {
-      alert('Login successfully');
+      notification('success', 'Login successfully');
       window.setTimeout(function () {
         window.location.assign('/');
-      });
+      }, 1500);
     }
   } catch (err) {
-    alert(err.response.data.message);
+    notification('success', err.response.data.message);
     // console.log(email, password);
     // console.log(err);
   }
 };
-
-submitBtn.addEventListener('click', (e) => {
-  e.preventDefault();
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-
-  login(email, password);
-});

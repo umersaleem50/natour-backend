@@ -28,11 +28,25 @@ app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 app.use(cors());
 
-app.use(
-  helmet({
-    contentSecurityPolicy: false,
-  })
-);
+// app.use(
+//   helmet({
+//     contentSecurityPolicy: false,
+//     crossOriginEmbedderPolicy: false,
+//     crossOriginOpenerPolicy: false,
+//     crossOriginResourcePolicy: false,
+//     dnsPrefetchControl: false,
+//     expectCt: false,
+//     frameguard: false,
+//     hidePoweredBy: false,
+//     hsts: false,
+//     ieNoOpen: false,
+//     noSniff: false,
+//     originAgentCluster: false,
+//     permittedCrossDomainPolicies: false,
+//     referrerPolicy: false,
+//     xssFilter: false,
+//   })
+// );
 
 //FOR GET REQUEST DETAILS IN DEVELOPMENT
 // if (process.env.NODE_ENV === 'development') {

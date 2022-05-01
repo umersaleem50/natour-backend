@@ -2,11 +2,13 @@
   "name": "natours-backend",
   "version": "1.0.0",
   "description": "learning express, nodejs and mongodb",
-  "main": "app.js",
+  "main": "bundle.js",
   "scripts": {
-    "start:dev": "nodemon server.js",
+    "start": "nodemon server.js",
     "start:prod": "NODE_ENV=production nodemon server.js",
-    "debug": "ndb server.js"
+    "debug": "ndb server.js",
+    "watch:js": "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundler.js --no-cache",
+    "build:js": "parcel build ./public/js/index.js --out-dir ./public/js --out-file bundler.js"
   },
   "repository": {
     "type": "git",
@@ -52,6 +54,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.29.3",
+    "parcel": "^1.12.3",
     "prettier": "^2.5.1"
   },
   "engines": {

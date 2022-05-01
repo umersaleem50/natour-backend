@@ -16,7 +16,7 @@ const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
 
   const cookieOptions = {
-    expiresIn: new Date(
+    expires: new Date(
       Date.now() + process.env.COOKIE_EXPIRES_IN * 60 * 60 * 24 * 1000
     ),
     httpOnly: true,
@@ -60,27 +60,38 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
-exports.isLoggedIn = catchAsync(async (req, res, next) => {
+exports.logout = (req, res) => {
+  res.cookie('jwt', 'logout', {
+    expires: new Date(Date.now + 1000 * 10),
+    httpOnly: true,
+  });
+  res.status(200).json({ status: 'success' });
+};
+
+exports.isLoggedIn = async (req, res, next) => {
   if (req.cookies.jwt) {
-    const decode = await promisify(jwt.verify)(
-      req.cookies.jwt,
-      process.env.JWT_SECURE_KEY
-    );
+    try {
+      const decode = await promisify(jwt.verify)(
+        req.cookies.jwt,
+        process.env.JWT_SECURE_KEY
+      );
 
-    const user = await User.findById(decode.id).select('+photo');
+      const user = await User.findById(decode.id).select('+photo');
 
-    if (!user) return next();
+      if (!user) return next();
 
-    if (user.passwordChangedAfter(decode.iat)) {
+      if (user.passwordChangedAfter(decode.iat)) {
+        return next();
+      }
+
+      res.locals.user = user;
+      return next();
+    } catch (err) {
       return next();
     }
-
-    res.locals.user = user;
-    return next();
   }
-
   next();
-});
+};
 
 exports.protect = catchAsync(async (req, res, next) => {
   let token;
