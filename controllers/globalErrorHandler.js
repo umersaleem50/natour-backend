@@ -25,37 +25,65 @@ const handleJWTInvalidToken = () => {
 const handleJWTExpireToken = () =>
   new ApiError('Token is expired!, Please login again!', 401);
 
-const showErrDev = (err, res) => {
+// SHOW ERRORS IN DEVELOPMENT
+const showErrDev = (err, req, res) => {
   const statusCode = err.statusCode || 500;
   const status = err.status || 'error';
-  res.status(statusCode).json({
-    // status: 'failed',
-    status: status,
-    error: err,
-    message: err.message,
-    stack: err.stack,
+  //IF AN API CALL
+
+  if (req.originalUrl.startsWith('/api')) {
+    return res.status(statusCode).json({
+      // status: 'failed',
+      status: status,
+      error: err,
+      message: err.message,
+      stack: err.stack,
+    });
+  }
+
+  //IF THE PAGE IS GOING TO RENDER
+  res.status(statusCode).render('error', {
+    title: 'Something went wrong!',
+    msg: err.message,
   });
 };
 
-const showErrProd = (err, res) => {
-  if (err.isOperational) {
-    res.status(err.statusCode).json({
-      status: err.status,
-      message: err.message,
-    });
-  } else {
-    res.status(500).json({
+// SHOW ERRORS IN PRODUCTION
+const showErrProd = (err, req, res) => {
+  //IF THIS IS AN API CALL
+  if (req.originalUrl.startsWith('/api')) {
+    if (err.isOperational) {
+      return res.status(err.statusCode).json({
+        status: err.status,
+        message: err.message,
+      });
+    }
+
+    return res.status(500).json({
       status: err.status,
       message: 'something went wrong!',
     });
   }
+
+  //  IF PAGE IS GOING TO RENDER
+  if (err.isOperational) {
+    return res.status(err.statusCode).render('error', {
+      title: 'Somthing went wrong',
+      msg: err.message,
+    });
+  }
+  res.status(err.statusCode).render('error', {
+    title: 'Something went wrong',
+    msg: 'Please try again later!',
+  });
 };
 
 module.exports = (err, req, res, next) => {
   if (process.env.NODE_ENV === 'development') {
-    showErrDev(err, res);
+    showErrDev(err, req, res);
   } else if (process.env.NODE_ENV === 'production') {
     let error = { ...err };
+    error.message = err.message;
     if (error.kind === 'ObjectId') error = handleCastErrorDB(error);
     if (error.code === 11000) error = handleDublicateErrorDB(error);
     if (error._message === 'Validation failed')
@@ -63,7 +91,7 @@ module.exports = (err, req, res, next) => {
     if (error.name === 'JsonWebTokenError') error = handleJWTInvalidToken();
     if (error.name === 'TokenExpiredError') error = handleJWTExpireToken();
 
-    showErrProd(error, res);
+    showErrProd(error, req, res);
   }
   next();
 };

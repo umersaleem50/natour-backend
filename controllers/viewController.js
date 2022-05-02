@@ -18,7 +18,7 @@ exports.getTour = catchAsync(async (req, res, next) => {
     fields: 'review rating user',
   });
 
-  if (!tour) return next(new ApiError('No document tour found!', 400));
+  if (!tour) return next(new ApiError('No tour found with this name!', 404));
   //2) Build template
 
   //3) Render data of 1)

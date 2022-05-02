@@ -2,7 +2,10 @@
 
 const submitBtn = document.getElementById('submitBtn');
 const logoutBtn = document.querySelector('.nav__el--logout');
-const locations = JSON.parse(document.getElementById('map').dataset.location);
+const mapEl = document.getElementById('map');
+
+let locations = [];
+if (mapEl) locations = JSON.parse(mapEl.dataset.location);
 
 const hideNotification = () => {
   const el = document.querySelector('.alert');
