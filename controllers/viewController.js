@@ -37,3 +37,9 @@ exports.login = catchAsync(async (req, res, next) => {
     title: 'Login into your account',
   });
 });
+
+exports.userAccount = (req, res, next) => {
+  res.status(200).render('account', {
+    title: 'User account',
+  });
+};

@@ -49,7 +49,8 @@ const logout = async function () {
     });
 
     if (response.data.status === 'success') {
-      location.reload(true);
+      // location.reload(true);
+      window.location.assign('/login');
     }
   } catch (err) {
     notification('error', 'Failed to logout, Please try again later');
