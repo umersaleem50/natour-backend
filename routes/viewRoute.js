@@ -13,6 +13,11 @@ router.get(
 );
 router.get('/login', viewController.login);
 router.get('/me', authController.protect, viewController.userAccount);
+router.post(
+  '/user-update-settings',
+  authController.protect,
+  viewController.updateUserSettings
+);
 
 module.exports = router;
 

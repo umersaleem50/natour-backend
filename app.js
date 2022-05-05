@@ -55,6 +55,7 @@ app.use(cors());
 
 //FOR BODY PARSING, AND WILL LIMIT THE AMMOUNT OF DATA COMMING
 app.use(express.json({ limit: '10kb' }));
+app.use(express.urlencoded({ limit: '10kb', extended: true }));
 
 //SANITIZE THE DATA
 app.use(mongoSanitize());

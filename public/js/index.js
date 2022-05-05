@@ -3,6 +3,10 @@
 const submitBtn = document.getElementById('submitBtn');
 const logoutBtn = document.querySelector('.nav__el--logout');
 const mapEl = document.getElementById('map');
+const settingBtn = document.querySelector('.btn-save-settings');
+const nameSetting = document.querySelector('.form__input--nameSetting');
+const emailSetting = document.querySelector('.form__input--emailSetting');
+const btnSavePassword = document.querySelector('.btn--savePassword');
 
 let locations = [];
 if (mapEl) locations = JSON.parse(mapEl.dataset.location);
@@ -41,6 +45,23 @@ const login = async (email, password) => {
   }
 };
 
+const updateSetting = async (data, type) => {
+  try {
+    const updatedDate = await axios({
+      url:
+        type === 'data'
+          ? 'http://127.0.0.1:3000/api/v1/users/updateMe'
+          : 'http://127.0.0.1:3000/api/v1/users/updateMyPassword',
+      method: 'PATCH',
+      data: data,
+    });
+    notification('success', `${type.toUpperCase()} updated successfully!`);
+    window.location.reload(true);
+  } catch (err) {
+    notification('error', err.message);
+  }
+};
+
 const logout = async function () {
   try {
     const response = await axios({
@@ -69,6 +90,32 @@ if (submitBtn) {
 
 if (logoutBtn) {
   logoutBtn.addEventListener('click', (e) => logout());
+}
+
+if (settingBtn) {
+  settingBtn.addEventListener('click', (e) => {
+    let name = nameSetting.value;
+    let email = emailSetting.value;
+
+    updateSetting({ name, email }, 'data');
+  });
+}
+
+if (btnSavePassword) {
+  btnSavePassword.addEventListener('click', async (e) => {
+    const passwordCurrent = document.querySelector('#password-current').value;
+    const password = document.querySelector('#password').value;
+    const passwordConfirm = document.querySelector('#password-confirm').value;
+
+    await updateSetting(
+      { passwordCurrent, password, passwordConfirm },
+      'password'
+    );
+
+    document.querySelector('#password-current').value = '';
+    document.querySelector('#password').value = '';
+    document.querySelector('#passwordConfirm').value = '';
+  });
 }
 
 // var map = L.map('map').setView([51.505, -0.09], 13);
