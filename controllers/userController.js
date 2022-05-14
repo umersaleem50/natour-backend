@@ -1,7 +1,31 @@
+const multer = require('multer');
 const User = require('../models/userModel');
 const catchAsync = require('../utilities/catchAsync');
 const ApiError = require('../utilities/ApiError');
 const factory = require('./handleFactory');
+
+const multerStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    console.log(file);
+    cb(null, './public/img/users');
+  },
+  filename: (req, file, cb) => {
+    const fileType = file.mimetype.split('/')[1];
+    cb(null, `user-${req.user.id}-${Date.now()}.${fileType}`);
+  },
+});
+
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb(new ApiError('Wrong file type, Please use an image!', 404), false);
+  }
+};
+
+const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
+
+exports.uploadImage = upload.single('photo');
 
 const filterData = (obj, ...filterEl) => {
   const newObj = {};
@@ -27,9 +51,11 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     );
   }
 
-  const filteredData = filterData(req.body, 'name', 'email');
+  const filteredBody = filterData(req.body, 'name', 'email');
 
-  const user = await User.findByIdAndUpdate(req.user.id, filteredData, {
+  if (req.file) filteredBody.photo = req.file.filename;
+
+  const user = await User.findByIdAndUpdate(req.user.id, filteredBody, {
     new: true,
     runValidators: true,
   });
