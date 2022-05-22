@@ -94,10 +94,12 @@ if (logoutBtn) {
 
 if (settingBtn) {
   settingBtn.addEventListener('click', (e) => {
-    let name = nameSetting.value;
-    let email = emailSetting.value;
+    const form = new FormData();
+    form.append('name', nameSetting.value);
+    form.append('email', emailSetting.value);
+    form.append('photo', document.getElementById('photo').files[0]);
 
-    updateSetting({ name, email }, 'data');
+    updateSetting(form, 'data');
   });
 }
 
