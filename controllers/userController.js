@@ -21,7 +21,7 @@ const multerFilter = (req, file, cb) => {
   if (file.mimetype.startsWith('image')) {
     cb(null, true);
   } else {
-    cb(new ApiError('Wrong file type, Please use an image!', 404), false);
+    cb(new ApiError('Wrong file type, Please use an image!', 401), false);
   }
 };
 
